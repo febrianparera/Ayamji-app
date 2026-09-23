@@ -40,33 +40,36 @@
         </tr>
       </thead>
       <tbody>
-        {% for req in requests %}
-          <tr class="border-t hover:bg-slate-50">
-            <td class="px-4 py-3 font-medium text-slate-800">{{ req.kode }}</td>
-            <td class="px-4 py-3 text-slate-700">{{ req.customer }}</td>
-            <td class="px-4 py-3 text-slate-600">{{ req.marketing }}</td>
-            <td class="px-4 py-3 text-slate-600">{{ req.items_count }} item</td>
-            <td class="px-4 py-3">
-              {% include "components/badge.html" with text=req.status_label color=req.status_color %}
-            </td>
-            <td class="px-4 py-3 text-slate-500 text-xs">{{ req.created_at }}</td>
-            <td class="px-4 py-3 text-right">
-              <a href="/requests/{{ req.id }}/"
-                 class="text-xs font-medium text-slate-700 hover:text-slate-900">
-                Detail →
-              </a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="7">
-              {% include "components/empty_state.html" with icon="inbox" title="Belum ada permintaan" description="Klik 'Catat Order Baru' untuk mulai mencatat order dari WhatsApp." %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-</div>
-{% endblock %}
+{% for req in requests %}
+  <tr class="border-t hover:bg-slate-50">
+    <td class="px-4 py-3 font-medium text-slate-800">{{ req.kode }}</td>
+    <td class="px-4 py-3 text-slate-700">{{ req.customer.nama }}</td>
+    <td class="px-4 py-3 text-slate-600">{{ req.marketing.username }}</td>
+    <td class="px-4 py-3 text-slate-600">{{ req.items.count }} item</td>
+    <td class="px-4 py-3">
+      {% if req.status == 'menunggu' %}
+        {% include "components/badge.html" with text="Menunggu Timbang" color="warning" %}
+      {% elif req.status == 'ditimbang' %}
+        {% include "components/badge.html" with text="Sudah Ditimbang" color="info" %}
+      {% elif req.status == 'nota' %}
+        {% include "components/badge.html" with text="Nota Dibuat" color="success" %}
+      {% else %}
+        {% include "components/badge.html" with text="Batal" color="danger" %}
+      {% endif %}
+    </td>
+    <td class="px-4 py-3 text-slate-500 text-xs">{{ req.created_at|date:"d M Y H:i" }}</td>
+    <td class="px-4 py-3 text-right">
+      <a href="/requests/{{ req.kode }}/"
+         class="text-xs font-medium text-slate-700 hover:text-slate-900">
+        Detail →
+      </a>
+    </td>
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="7">
+      {% include "components/empty_state.html" with icon="inbox" title="Belum ada permintaan" description="Buka Django Admin untuk menambahkan data." %}
+    </td>
+  </tr>
+{% endfor %}
+{%endblock %}
