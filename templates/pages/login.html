@@ -1,0 +1,48 @@
+{% extends "layouts/Home.html" %}
+
+{% block title %}Masuk{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold">🐔 AyamJī</h1>
+      <p class="text-sm text-slate-500 mt-1">
+        Sistem Penjualan Ayam Beku
+      </p>
+    </div>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="text-sm font-medium">Email</label>
+        <input type="email" name="email"
+               class="w-full mt-1 px-3 py-2 border rounded-lg
+                      focus:outline-none focus:ring-2 focus:ring-slate-900"
+               placeholder="nama@ayamji.id" required />
+      </div>
+
+      <div>
+        <label class="text-sm font-medium">Password</label>
+        <input type="password" name="password"
+               class="w-full mt-1 px-3 py-2 border rounded-lg
+                      focus:outline-none focus:ring-2 focus:ring-slate-900"
+               required />
+      </div>
+
+      <button type="submit"
+              class="w-full bg-slate-900 text-white py-2.5 rounded-lg
+                     hover:bg-slate-800 transition font-medium">
+        Masuk
+      </button>
+    </form>
+
+    <p class="text-xs text-slate-400 mt-6 text-center">
+      Demo login akan aktif setelah backend siap
+    </p>
+
+  </div>
+</div>
+{% endblock %}
