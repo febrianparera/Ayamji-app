@@ -1,0 +1,124 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}Catat Order Baru{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl space-y-6">
+
+  {% include "components/page_header.html" with title="Catat Order dari WhatsApp" subtitle="Copy-paste pesan WA marketing, lengkapi data, kirim ke gudang." %}
+
+  {# ─── Banner pengingat ─── #}
+  <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex gap-3">
+    <i data-lucide="message-square" class="text-green-600 shrink-0 mt-0.5 w-5 h-5"></i>
+    <div class="text-sm text-green-800">
+      <p class="font-medium">Tips cepat</p>
+      <p class="text-green-700">
+        Buka grup WA, copy pesan marketing, lalu tempel ke kolom
+        <b>Referensi Pesan WA</b> di bawah.
+      </p>
+    </div>
+  </div>
+
+  {# ─── Form ─── #}
+  <form method="post" class="bg-white p-6 rounded-xl border space-y-5">
+    {% csrf_token %}
+
+    {# Sumber & Marketing #}
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="text-sm font-medium">Sumber Order</label>
+        <select name="source"
+                class="w-full mt-1 px-3 py-2 border rounded-lg
+                       focus:outline-none focus:ring-2 focus:ring-slate-900">
+          <option value="whatsapp">WhatsApp</option>
+          <option value="telepon">Telepon</option>
+          <option value="walk_in">Datang Langsung</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium">Marketing</label>
+        <select name="marketing"
+                class="w-full mt-1 px-3 py-2 border rounded-lg
+                       focus:outline-none focus:ring-2 focus:ring-slate-900"
+                required>
+          <option value="">Pilih marketing...</option>
+          <option value="Andi">Andi</option>
+          <option value="Rina">Rina</option>
+          <option value="Dewi">Dewi</option>
+        </select>
+      </div>
+    </div>
+
+    {# Customer #}
+    <div>
+      <label class="text-sm font-medium">Customer</label>
+      <select name="customer"
+              class="w-full mt-1 px-3 py-2 border rounded-lg
+                     focus:outline-none focus:ring-2 focus:ring-slate-900"
+              required>
+        <option value="">Pilih customer...</option>
+        <option value="Toko Berkah">Toko Berkah</option>
+        <option value="RM Sederhana">RM Sederhana</option>
+        <option value="Warung Bu Yati">Warung Bu Yati</option>
+      </select>
+    </div>
+
+    {# Referensi WA #}
+    <div>
+      <label class="text-sm font-medium">Referensi Pesan WA (opsional)</label>
+      <textarea name="wa_message" rows="3"
+                placeholder='Contoh: "Bang, order 20 kg paha atas dan 10 kg sayap untuk Pak Andi"'
+                class="w-full mt-1 px-3 py-2 border rounded-lg text-sm
+                       focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
+    </div>
+
+    {# Item — sementara 1 baris saja, nanti kita bikin dinamis dengan JS #}
+    <div>
+      <label class="text-sm font-medium mb-2 block">Daftar Produk</label>
+      <div class="grid grid-cols-12 gap-2 mb-2">
+        <input type="text" name="product_name[]" placeholder="Nama produk"
+               class="col-span-5 px-3 py-2 border rounded-lg text-sm" required />
+        <input type="number" name="qty[]" placeholder="Qty"
+               class="col-span-3 px-3 py-2 border rounded-lg text-sm" required />
+        <select name="unit[]"
+                class="col-span-3 px-3 py-2 border rounded-lg text-sm">
+          <option value="kg">kg</option>
+          <option value="pack">pack</option>
+          <option value="box">box</option>
+        </select>
+        <div class="col-span-1"></div>
+      </div>
+      <button type="button"
+              class="text-sm flex items-center gap-1 text-slate-700 hover:text-slate-900">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah baris
+      </button>
+      <p class="text-xs text-slate-400 mt-2">
+        *Fungsi tambah baris akan diaktifkan setelah backend siap.
+      </p>
+    </div>
+
+    {# Catatan #}
+    <div>
+      <label class="text-sm font-medium">Catatan (opsional)</label>
+      <textarea name="note" rows="2"
+                placeholder="Contoh: tolong dipisah per 5kg"
+                class="w-full mt-1 px-3 py-2 border rounded-lg
+                       focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
+    </div>
+
+    {# Tombol #}
+    <div class="flex justify-end gap-2 pt-2 border-t">
+      <a href="/requests/"
+         class="px-4 py-2 border rounded-lg hover:bg-slate-50 text-sm">
+        Batal
+      </a>
+      <button type="submit"
+              class="px-4 py-2 bg-slate-900 text-white rounded-lg
+                     hover:bg-slate-800 text-sm font-medium">
+        Kirim ke Gudang
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

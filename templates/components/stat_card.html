@@ -1,0 +1,16 @@
+{# Parameter: title, value, icon (nama Lucide), delta (opsional), trend (up|down) #}
+<div class="bg-white p-5 rounded-xl border">
+  <div class="flex items-center justify-between">
+    <span class="text-sm text-slate-500">{{ title }}</span>
+    <div class="p-2 bg-slate-100 rounded-lg">
+      <i data-lucide="{{ icon }}" class="w-4 h-4"></i>
+    </div>
+  </div>
+  <div class="mt-3 text-2xl font-bold text-slate-800">{{ value }}</div>
+  {% if delta %}
+    <div class="text-xs mt-1
+      {% if trend == 'up' %}text-green-600{% else %}text-red-600{% endif %}">
+      {% if trend == 'up' %}▲{% else %}▼{% endif %} {{ delta }}
+    </div>
+  {% endif %}
+</div>

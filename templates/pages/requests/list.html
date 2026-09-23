@@ -1,0 +1,72 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block title %}Daftar Permintaan{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ─── HEADER ─── #}
+  {% include "components/page_header.html" with title="Daftar Permintaan" subtitle="Order dari marketing via WhatsApp yang sudah dicatat admin" action_url="/requests/new/" action_label="Catat Order Baru" %}
+
+  {# ─── STAT CARDS ─── #}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    {% include "components/stat_card.html" with title="Total Hari Ini" value="12" icon="clipboard-list" %}
+    {% include "components/stat_card.html" with title="Menunggu Timbang" value="5" icon="clock" delta="perlu aksi" trend="down" %}
+    {% include "components/stat_card.html" with title="Sudah Ditimbang" value="4" icon="scale" %}
+    {% include "components/stat_card.html" with title="Sudah Jadi Nota" value="3" icon="receipt" delta="dari 12" trend="up" %}
+  </div>
+
+  {# ─── FILTER ─── #}
+  <div class="flex flex-wrap gap-2">
+    <a href="?" class="px-3 py-1.5 text-xs rounded-full border bg-slate-900 text-white">Semua</a>
+    <a href="?status=menunggu" class="px-3 py-1.5 text-xs rounded-full border bg-white hover:bg-slate-50">Menunggu Timbang</a>
+    <a href="?status=ditimbang" class="px-3 py-1.5 text-xs rounded-full border bg-white hover:bg-slate-50">Sudah Ditimbang</a>
+    <a href="?status=nota" class="px-3 py-1.5 text-xs rounded-full border bg-white hover:bg-slate-50">Nota Dibuat</a>
+    <a href="?status=batal" class="px-3 py-1.5 text-xs rounded-full border bg-white hover:bg-slate-50">Batal</a>
+  </div>
+
+  {# ─── TABEL ─── #}
+  <div class="bg-white rounded-xl border overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-500 text-left">
+        <tr>
+          <th class="px-4 py-3 font-medium">Kode</th>
+          <th class="px-4 py-3 font-medium">Customer</th>
+          <th class="px-4 py-3 font-medium">Marketing</th>
+          <th class="px-4 py-3 font-medium">Item</th>
+          <th class="px-4 py-3 font-medium">Status</th>
+          <th class="px-4 py-3 font-medium">Tanggal</th>
+          <th class="px-4 py-3 font-medium text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+          <tr class="border-t hover:bg-slate-50">
+            <td class="px-4 py-3 font-medium text-slate-800">{{ req.kode }}</td>
+            <td class="px-4 py-3 text-slate-700">{{ req.customer }}</td>
+            <td class="px-4 py-3 text-slate-600">{{ req.marketing }}</td>
+            <td class="px-4 py-3 text-slate-600">{{ req.items_count }} item</td>
+            <td class="px-4 py-3">
+              {% include "components/badge.html" with text=req.status_label color=req.status_color %}
+            </td>
+            <td class="px-4 py-3 text-slate-500 text-xs">{{ req.created_at }}</td>
+            <td class="px-4 py-3 text-right">
+              <a href="/requests/{{ req.id }}/"
+                 class="text-xs font-medium text-slate-700 hover:text-slate-900">
+                Detail →
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7">
+              {% include "components/empty_state.html" with icon="inbox" title="Belum ada permintaan" description="Klik 'Catat Order Baru' untuk mulai mencatat order dari WhatsApp." %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
