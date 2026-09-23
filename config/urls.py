@@ -40,7 +40,8 @@ urlpatterns = [
     path("dashboard/", dashboard_view, name="dashboard"),
 
     # Modul Requests
-    path("requests/", orders_views.requests_list_view, name="requests_list"),
+        path("requests/", orders_views.requests_list_view, name="requests_list"),
+    path("requests/new/", orders_views.requests_new_view, name="requests_new"), 
 
     # (sementara: view lain akan dipindah di sesi berikutnya)
 ]

@@ -23,91 +23,74 @@
   <form method="post" class="bg-white p-6 rounded-xl border space-y-5">
     {% csrf_token %}
 
-    {# Sumber & Marketing #}
+    {# Error umum #}
+    {% if form.non_field_errors %}
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    {# ─── Customer & Marketing ─── #}
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <label class="text-sm font-medium">Sumber Order</label>
-        <select name="source"
-                class="w-full mt-1 px-3 py-2 border rounded-lg
-                       focus:outline-none focus:ring-2 focus:ring-slate-900">
-          <option value="whatsapp">WhatsApp</option>
-          <option value="telepon">Telepon</option>
-          <option value="walk_in">Datang Langsung</option>
-        </select>
+        <label class="text-sm font-medium">{{ form.customer.label }}</label>
+        {{ form.customer }}
+        {% if form.customer.errors %}
+          <p class="text-xs text-red-600 mt-1">{{ form.customer.errors.0 }}</p>
+        {% endif %}
       </div>
       <div>
-        <label class="text-sm font-medium">Marketing</label>
-        <select name="marketing"
-                class="w-full mt-1 px-3 py-2 border rounded-lg
-                       focus:outline-none focus:ring-2 focus:ring-slate-900"
-                required>
-          <option value="">Pilih marketing...</option>
-          <option value="Andi">Andi</option>
-          <option value="Rina">Rina</option>
-          <option value="Dewi">Dewi</option>
-        </select>
+        <label class="text-sm font-medium">{{ form.marketing.label }}</label>
+        {{ form.marketing }}
+        {% if form.marketing.errors %}
+          <p class="text-xs text-red-600 mt-1">{{ form.marketing.errors.0 }}</p>
+        {% endif %}
       </div>
     </div>
 
-    {# Customer #}
+    {# ─── Sumber Order ─── #}
     <div>
-      <label class="text-sm font-medium">Customer</label>
-      <select name="customer"
-              class="w-full mt-1 px-3 py-2 border rounded-lg
-                     focus:outline-none focus:ring-2 focus:ring-slate-900"
-              required>
-        <option value="">Pilih customer...</option>
-        <option value="Toko Berkah">Toko Berkah</option>
-        <option value="RM Sederhana">RM Sederhana</option>
-        <option value="Warung Bu Yati">Warung Bu Yati</option>
-      </select>
+      <label class="text-sm font-medium">{{ form.source.label }}</label>
+      {{ form.source }}
+      {% if form.source.errors %}
+        <p class="text-xs text-red-600 mt-1">{{ form.source.errors.0 }}</p>
+      {% endif %}
     </div>
 
-    {# Referensi WA #}
+    {# ─── WA Message ─── #}
     <div>
-      <label class="text-sm font-medium">Referensi Pesan WA (opsional)</label>
-      <textarea name="wa_message" rows="3"
-                placeholder='Contoh: "Bang, order 20 kg paha atas dan 10 kg sayap untuk Pak Andi"'
-                class="w-full mt-1 px-3 py-2 border rounded-lg text-sm
-                       focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
+      <label class="text-sm font-medium">{{ form.wa_message.label }}</label>
+      {{ form.wa_message }}
+      {% if form.wa_message.errors %}
+        <p class="text-xs text-red-600 mt-1">{{ form.wa_message.errors.0 }}</p>
+      {% endif %}
     </div>
 
-    {# Item — sementara 1 baris saja, nanti kita bikin dinamis dengan JS #}
+    {# ─── Catatan ─── #}
     <div>
-      <label class="text-sm font-medium mb-2 block">Daftar Produk</label>
-      <div class="grid grid-cols-12 gap-2 mb-2">
-        <input type="text" name="product_name[]" placeholder="Nama produk"
-               class="col-span-5 px-3 py-2 border rounded-lg text-sm" required />
-        <input type="number" name="qty[]" placeholder="Qty"
-               class="col-span-3 px-3 py-2 border rounded-lg text-sm" required />
-        <select name="unit[]"
-                class="col-span-3 px-3 py-2 border rounded-lg text-sm">
-          <option value="kg">kg</option>
-          <option value="pack">pack</option>
-          <option value="box">box</option>
-        </select>
-        <div class="col-span-1"></div>
+      <label class="text-sm font-medium">{{ form.note.label }}</label>
+      {{ form.note }}
+      {% if form.note.errors %}
+        <p class="text-xs text-red-600 mt-1">{{ form.note.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    {# ─── INFO: Item ditambahkan via Admin dulu ─── #}
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
+      <i data-lucide="info" class="text-blue-600 shrink-0 mt-0.5 w-5 h-5"></i>
+      <div class="text-sm text-blue-800">
+        <p class="font-medium">Daftar produk</p>
+        <p class="text-blue-700">
+          Untuk sesi ini, item produk ditambahkan lewat
+          <a href="/admin/orders/productrequest/" target="_blank"
+             class="underline font-medium">Django Admin</a>.
+          Form dinamis untuk item akan dibuat di sesi berikutnya.
+        </p>
       </div>
-      <button type="button"
-              class="text-sm flex items-center gap-1 text-slate-700 hover:text-slate-900">
-        <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah baris
-      </button>
-      <p class="text-xs text-slate-400 mt-2">
-        *Fungsi tambah baris akan diaktifkan setelah backend siap.
-      </p>
     </div>
 
-    {# Catatan #}
-    <div>
-      <label class="text-sm font-medium">Catatan (opsional)</label>
-      <textarea name="note" rows="2"
-                placeholder="Contoh: tolong dipisah per 5kg"
-                class="w-full mt-1 px-3 py-2 border rounded-lg
-                       focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
-    </div>
-
-    {# Tombol #}
-    <div class="flex justify-end gap-2 pt-2 border-t">
+    {# ─── Tombol Aksi ─── #}
+    <div class="flex justify-end gap-2 pt-4 border-t">
       <a href="/requests/"
          class="px-4 py-2 border rounded-lg hover:bg-slate-50 text-sm">
         Batal
@@ -115,7 +98,7 @@
       <button type="submit"
               class="px-4 py-2 bg-slate-900 text-white rounded-lg
                      hover:bg-slate-800 text-sm font-medium">
-        Kirim ke Gudang
+        Simpan Permintaan
       </button>
     </div>
 
