@@ -59,3 +59,14 @@ class RequestItemForm(forms.ModelForm):
                 'class': 'w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900',
             }),
         }
+
+from django.forms import inlineformset_factory
+
+RequestItemFormSet = inlineformset_factory(
+parent_model=ProductRequest,
+model=RequestItem,
+form=RequestItemForm,
+fields=['product', 'qty_requested', 'note'],
+extra=1,           
+can_delete=True,   
+)

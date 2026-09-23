@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db import transaction
 
 from .models import ProductRequest, RequestItem
-from .forms import ProductRequestForm, RequestItemForm
+from .forms import ProductRequestForm, RequestItemForm, RequestItemFormSet
 from .utils import generate_kode
 
 
@@ -29,44 +30,94 @@ def requests_list_view(request):
     }
     return render(request, "pages/requests/list.html", context)
 
-
 def requests_new_view(request):
-    """Form input order baru. Handle GET (tampilkan) & POST (simpan)."""
+    """Form input order + item dinamis. Handle GET & POST."""
+
     if request.method == 'POST':
-        # Data dikirim dari form
         form = ProductRequestForm(request.POST)
+        formset = RequestItemFormSet(request.POST)
 
-        if form.is_valid():
-            # Simpan ke database, TAPI jangan commit dulu
-            # (supaya kita bisa isi field yang tidak ada di form)
-            req = form.save(commit=False)
+        if form.is_valid() and formset.is_valid():
+            try:
+                with transaction.atomic():
+                    # 1. Simpan ProductRequest (belum commit)
+                    req = form.save(commit=False)
+                    req.kode = generate_kode()
+                    req.status = 'menunggu'
+                    req.input_by = User.objects.first()
+                    req.save()
 
-            # Isi field otomatis
-            req.kode = generate_kode()
-            req.status = 'menunggu'
+                    # 2. Simpan semua RequestItem, terikat ke req
+                    formset.instance = req
+                    formset.save()
 
-            # Sementara: ambil user pertama dari DB
-            # (nanti setelah login asli, ganti jadi request.user)
-            user = User.objects.first()
-            req.input_by = user
-            # Marketing dari form juga berupa User
-            # Tapi form pakai dropdown "marketing" → sudah User
+                messages.success(
+                    request,
+                    f"Permintaan {req.kode} berhasil dibuat dengan "
+                    f"{req.items.count()} item!"
+                )
+                return redirect('requests_list')
 
-            req.save()
-
-            # Redirect ke list dengan notifikasi sukses
-            messages.success(request, f"Permintaan {req.kode} berhasil dibuat!")
-            return redirect('requests_list')
+            except Exception as e:
+                messages.error(request, f"Gagal menyimpan: {e}")
         else:
             messages.error(request, "Ada kesalahan di form. Periksa kembali.")
+
     else:
-        # GET — tampilkan form kosong
+        # GET — form kosong
         form = ProductRequestForm()
+        formset = RequestItemFormSet()
 
     context = {
         "menu": get_menu(),
         "user_name": "Admin",
         "user_role": "Admin",
         "form": form,
+        "formset": formset,
+    }
+    return render(request, "pages/requests/form.html", context)
+    """Form input order + item dinamis. Handle GET & POST."""
+
+    if request.method == 'POST':
+        form = ProductRequestForm(request.POST)
+        formset = RequestItemFormSet(request.POST)
+
+        if form.is_valid() and formset.is_valid():
+            try:
+                with transaction.atomic():
+                    # 1. Simpan ProductRequest (belum commit)
+                    req = form.save(commit=False)
+                    req.kode = generate_kode()
+                    req.status = 'menunggu'
+                    req.input_by = User.objects.first()
+                    req.save()
+
+                    # 2. Simpan semua RequestItem, terikat ke req
+                    formset.instance = req
+                    formset.save()
+
+                messages.success(
+                    request,
+                    f"Permintaan {req.kode} berhasil dibuat dengan "
+                    f"{req.items.count()} item!"
+                )
+                return redirect('requests_list')
+
+            except Exception as e:
+                messages.error(request, f"Gagal menyimpan: {e}")
+        else:
+            messages.error(request, "Ada kesalahan di form. Periksa kembali.")
+
+    else:
+        # GET — form kosong
+        form = ProductRequestForm()
+        formset = RequestItemFormSet()
+
+    context = {
+        "menu": get_menu(),
+        "user_name": "Admin",
+        "user_role": "Admin",
+        "form": form,
+        "formset": formset,
     }
     return render(request, "pages/requests/form.html", context)
